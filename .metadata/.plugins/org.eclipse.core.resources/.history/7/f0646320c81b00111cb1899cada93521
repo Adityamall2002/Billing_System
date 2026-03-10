@@ -1,0 +1,54 @@
+package com.billing.billingsystem.service;
+
+import java.time.LocalDateTime;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.billing.billingsystem.dto.BillRequest;
+import com.billing.billingsystem.entity.*;
+import com.billing.billingsystem.repository.*;
+
+@Service
+public class BillService {
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private BillRepository billRepository;
+
+    @Autowired
+    private BillItemRepository billItemRepository;
+
+    public Bill generateBill(BillRequest request) {
+
+        double total = 0;
+
+        for (BillRequest.Item item : request.getItems()) {
+
+            Product product = productRepository.findById(item.getProductId()).orElseThrow();
+
+            double price = product.getPrice() * item.getQuantity();
+
+            total += price;
+
+            BillItem billItem = new BillItem();
+            billItem.setProductId(product.getId());
+            billItem.setQuantity(item.getQuantity());
+            billItem.setPrice(product.getPrice());
+
+            billItemRepository.save(billItem);
+
+            product.setQuantity(product.getQuantity() - item.getQuantity());
+            productRepository.save(product);
+        }
+
+        Bill bill = new Bill();
+        bill.setCustomerName(request.getCustomerName());
+        bill.setTotalAmount(total);
+        bill.setBillDate(LocalDateTime.now());
+
+        return billRepository.save(bill);
+    }
+}

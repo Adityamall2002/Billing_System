@@ -1,0 +1,83 @@
+package com.billing.billingsystem.service;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.billing.billingsystem.dto.BillRequest;
+import com.billing.billingsystem.entity.Bill;
+import com.billing.billingsystem.entity.BillItem;
+import com.billing.billingsystem.entity.Product;
+import com.billing.billingsystem.repository.BillItemRepository;
+import com.billing.billingsystem.repository.BillRepository;
+import com.billing.billingsystem.repository.ProductRepository;
+import com.billing.billingsystem.util.PdfGenerator;
+
+@Service
+public class BillService {
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private BillRepository billRepository;
+
+    @Autowired
+    private BillItemRepository billItemRepository;
+
+    public Bill generateBill(BillRequest request) {
+
+        double totalAmount = 0;
+
+        List<BillItem> billItems = new ArrayList<>();
+
+        for (BillRequest.Item item : request.getItems()) {
+
+            Product product = productRepository
+                    .findById(item.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+
+            int quantity = item.getQuantity();
+
+            double itemTotal = product.getPrice() * quantity;
+
+            totalAmount += itemTotal;
+
+            // Create BillItem
+            BillItem billItem = new BillItem();
+            billItem.setProductId(product.getId());
+            billItem.setQuantity(quantity);
+            billItem.setPrice(product.getPrice());
+
+            billItemRepository.save(billItem);
+
+            billItems.add(billItem);
+
+            // Update product stock
+            int newStock = product.getQuantity() - quantity;
+
+            if (newStock < 0) {
+                throw new RuntimeException("Not enough stock for product: " + product.getName());
+            }
+
+            product.setQuantity(newStock);
+            productRepository.save(product);
+        }
+
+        // Create Bill
+        Bill bill = new Bill();
+        bill.setCustomerName(request.getCustomerName());
+        bill.setTotalAmount(totalAmount);
+        bill.setBillDate(LocalDateTime.now());
+
+        Bill savedBill = billRepository.save(bill);
+
+        // Generate PDF receipt
+        PdfGenerator.generateBillPdf(request.getCustomerName(), totalAmount, billItems);
+
+        return savedBill;
+    }
+}

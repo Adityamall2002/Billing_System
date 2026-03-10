@@ -1,2 +1,3 @@
-2026/03/08-21:12:36.963 a7c Creating DB C:\Users\KIIT\Downloads\billingsystem (1)\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb since it was missing.
-2026/03/08-21:12:37.046 a7c Reusing MANIFEST C:\Users\KIIT\Downloads\billingsystem (1)\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb/MANIFEST-000001
+2026/03/10-18:19:55.351 61ec Reusing MANIFEST C:\Users\KIIT\Downloads\billingsystem (1)\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb/MANIFEST-000001
+2026/03/10-18:19:55.362 61ec Recovering log #3
+2026/03/10-18:19:55.366 61ec Reusing old log C:\Users\KIIT\Downloads\billingsystem (1)\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb/000003.log 

@@ -1,0 +1,75 @@
+package com.billing.billingsystem.util;
+
+import java.io.File;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import com.billing.billingsystem.entity.BillItem;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+
+public class PdfGenerator {
+
+    public static void generateBillPdf(String customerName, double totalAmount, List<BillItem> items) {
+
+        try {
+
+            String folderPath = "C:/bills/";
+
+            File folder = new File(folderPath);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+
+            String filePath = folderPath + "bill_" + System.currentTimeMillis() + ".pdf";
+
+            PdfWriter writer = new PdfWriter(filePath);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+
+            // Store Name
+            document.add(new Paragraph("ADITYA MART"));
+            document.add(new Paragraph("---------------------------------------"));
+
+            // Customer details
+            document.add(new Paragraph("Customer : " + customerName));
+            document.add(new Paragraph("Date : " + LocalDateTime.now()));
+            document.add(new Paragraph(" "));
+
+            // Table for products
+            float[] columnWidths = {200F, 100F, 100F, 100F};
+            Table table = new Table(columnWidths);
+
+            table.addCell("Product");
+            table.addCell("Qty");
+            table.addCell("Price");
+            table.addCell("Total");
+
+            // Add items
+            for (BillItem item : items) {
+
+                table.addCell(item.getProductName());
+                table.addCell(String.valueOf(item.getQuantity()));
+                table.addCell(String.valueOf(item.getPrice()));
+                table.addCell(String.valueOf(item.getQuantity() * item.getPrice()));
+            }
+
+            document.add(table);
+
+            document.add(new Paragraph("---------------------------------------"));
+            document.add(new Paragraph("TOTAL : ₹" + totalAmount));
+            document.add(new Paragraph("---------------------------------------"));
+            document.add(new Paragraph("Thank You For Shopping!"));
+
+            document.close();
+
+            System.out.println("PDF created: " + filePath);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
