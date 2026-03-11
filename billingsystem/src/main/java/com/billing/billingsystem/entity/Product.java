@@ -15,7 +15,10 @@ public class Product {
 
     private int quantity;
 
-    public Product() {}
+    private String barcode;
+
+    public Product() {
+    }
 
     public Long getId() {
         return id;
@@ -43,5 +46,13 @@ public class Product {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 }

@@ -3,18 +3,20 @@ package com.billing.billingsystem.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.billing.billingsystem.repository.BillRepository;
+import com.billing.billingsystem.service.AnalyticsService;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/analytics")
 public class AnalyticsController {
 
     @Autowired
-    private BillRepository billRepository;
+    private AnalyticsService analyticsService;
 
-    @GetMapping("/total-sales")
-    public Double totalSales() {
+    @GetMapping("/dashboard")
+    public Map<String, Object> getDashboard() {
 
-        return billRepository.getTotalSales();
+        return analyticsService.getDashboardData();
     }
 }

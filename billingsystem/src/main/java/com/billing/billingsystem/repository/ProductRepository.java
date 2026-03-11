@@ -5,4 +5,6 @@ import com.billing.billingsystem.entity.Product;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    Product findByBarcode(String barcode);
+
 }

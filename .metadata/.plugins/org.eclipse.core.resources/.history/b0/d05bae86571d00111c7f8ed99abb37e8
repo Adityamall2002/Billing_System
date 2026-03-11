@@ -1,0 +1,34 @@
+package com.billing.billingsystem.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.billing.billingsystem.repository.BillRepository;
+
+import java.time.LocalDate;
+
+@Service
+public class AnalyticsService {
+
+    @Autowired
+    private BillRepository billRepository;
+
+    public double getTotalRevenue() {
+
+        Double total = billRepository.sumTotalRevenue();
+
+        return total != null ? total : 0;
+    }
+
+    public long getTotalBills() {
+
+        return billRepository.count();
+    }
+
+    public double getTodaySales() {
+
+        Double total = billRepository.sumTodaySales(LocalDate.now());
+
+        return total != null ? total : 0;
+    }
+}

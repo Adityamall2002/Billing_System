@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.billing.billingsystem.entity.Product;
+import com.billing.billingsystem.repository.ProductRepository;
 import com.billing.billingsystem.service.ProductService;
 
 @RestController
@@ -14,6 +15,9 @@ public class ProductController {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    ProductRepository productRepository;
 
     @PostMapping("/add")
     public Product addProduct(@RequestBody Product product) {
@@ -33,5 +37,12 @@ public class ProductController {
         productService.deleteProduct(id);
 
         return "Product Deleted";
+    }
+
+    // 🔎 Barcode Scanner API
+    @GetMapping("/barcode/{code}")
+    public Product getProductByBarcode(@PathVariable String code) {
+
+        return productRepository.findByBarcode(code);
     }
 }
